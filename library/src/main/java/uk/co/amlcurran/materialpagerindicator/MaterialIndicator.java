@@ -11,7 +11,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Interpolator;
 
@@ -84,10 +83,8 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = getMeasuredWidth();
-        Log.d(TAG, "mwidth: " + width);
         if (getLayoutParams().width == ViewPager.LayoutParams.WRAP_CONTENT) {
             width = getSuggestedMinimumWidth();
-            Log.d(TAG, "wrapc: " + width);
         }
         setMeasuredDimension(width, getSuggestedMinimumHeight());
     }
@@ -98,7 +95,7 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
     }
 
     private float getInternalPadding() {
-        if (indicatorPadding == UNDEFINED_PADDING || count == 0) {
+        if (indicatorPadding == UNDEFINED_PADDING || indicatorPadding == 0 || count == 0) {
             return 0;
         }
         return indicatorPadding * (count - 1);
