@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -66,19 +65,12 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
         float gap = (getWidth() - indicatorDiameter()) / (count + 1);
         for (int i = 0; i < count; i++) {
             float position = gap * (i + 1);
-            canvas.drawCircle(position + indicatorRadius, midY(), indicatorRadius, getIndicatorPaint(i));
+            canvas.drawCircle(position + indicatorRadius, midY(), indicatorRadius, indicatorPaint);
         }
-        float extenderStart = gap * (selectedPage + 1);
-        float extenderEnd = extenderStart + indicatorDiameter() + clamp(gap * offset * 2, gap);
+        float extenderStart = gap * (selectedPage + 1) + Math.max(gap * (offset - 0.5f) * 2, 0);
+        float extenderEnd = gap * (selectedPage + 1) + indicatorDiameter() + Math.min(gap * offset * 2, gap);
         selectorRect.set(extenderStart, midY() - indicatorRadius, extenderEnd, midY() + indicatorRadius);
         canvas.drawRoundRect(selectorRect, indicatorRadius, indicatorRadius, selectedIndicatorPaint);
-    }
-
-    private static float clamp(float value, float clamp) {
-        if (value < clamp) {
-           return value;
-        }
-        return clamp;
     }
 
     private float indicatorDiameter() {
@@ -89,11 +81,4 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
         return getHeight() / 2f;
     }
 
-    @NonNull
-    private Paint getIndicatorPaint(int position) {
-        if (position == selectedPage) {
-            return selectedIndicatorPaint;
-        }
-        return indicatorPaint;
-    }
 }
