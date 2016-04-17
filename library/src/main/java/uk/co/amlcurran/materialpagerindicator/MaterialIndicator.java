@@ -1,6 +1,7 @@
 package uk.co.amlcurran.materialpagerindicator;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -17,7 +18,7 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
 
     private final Paint indicatorPaint;
     private final Paint selectedIndicatorPaint;
-    private final float indicatorRadius = 20;
+    private final float indicatorRadius;
     private final RectF selectorRect;
     private int count;
     private int selectedPage = 0;
@@ -32,13 +33,19 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
     public MaterialIndicator(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         selectedIndicatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        selectedIndicatorPaint.setColor(Color.RED);
-        indicatorPaint = new Paint(selectedIndicatorPaint);
+        indicatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         indicatorPaint.setColor(Color.BLACK);
         indicatorPaint.setAlpha((int) (deselectedAlpha * 255));
         selectorRect = new RectF();
         if (isInEditMode()) {
             count = 3;
+        }
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.MaterialIndicator, 0, R.style.MaterialIndicator);
+        try {
+            indicatorRadius = typedArray.getDimension(R.styleable.MaterialIndicator_mi_indicatorRadius, 0);
+            selectedIndicatorPaint.setColor(typedArray.getColor(R.styleable.MaterialIndicator_mi_indicatorColor, 0));
+        } finally {
+            typedArray.recycle();
         }
     }
 
