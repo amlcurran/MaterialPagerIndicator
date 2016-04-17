@@ -9,7 +9,7 @@
     <item name="colorAccent">@color/colorAccent</item>
   </style>
 
-  <style name="MaterialIndicator.Default">
+  <style name="MaterialIndicator.Demo">
     <item name="mi_indicatorColor">?android:attr/colorAccent</item>
     <item name="mi_indicatorPadding">32dp</item>
     <item name="mi_indicatorRadius">8dp</item>
