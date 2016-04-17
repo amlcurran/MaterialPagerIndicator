@@ -69,9 +69,16 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
             canvas.drawCircle(position + indicatorRadius, midY(), indicatorRadius, getIndicatorPaint(i));
         }
         float extenderStart = gap * (selectedPage + 1);
-        float extenderEnd = extenderStart + indicatorDiameter() + gap * offset;
+        float extenderEnd = extenderStart + indicatorDiameter() + clamp(gap * offset * 2, gap);
         selectorRect.set(extenderStart, midY() - indicatorRadius, extenderEnd, midY() + indicatorRadius);
         canvas.drawRoundRect(selectorRect, indicatorRadius, indicatorRadius, selectedIndicatorPaint);
+    }
+
+    private static float clamp(float value, float clamp) {
+        if (value < clamp) {
+           return value;
+        }
+        return clamp;
     }
 
     private float indicatorDiameter() {
