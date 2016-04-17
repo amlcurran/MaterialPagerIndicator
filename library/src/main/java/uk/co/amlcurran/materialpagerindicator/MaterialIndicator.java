@@ -94,14 +94,14 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
 
     @Override
     protected int getSuggestedMinimumWidth() {
-        return (int) (indicatorDiameter() * count) + getTotalPadding() + ViewCompat.getPaddingStart(this) + ViewCompat.getPaddingEnd(this);
+        return (int) (indicatorDiameter() * count + getInternalPadding());
     }
 
-    private int getTotalPadding() {
+    private float getInternalPadding() {
         if (indicatorPadding == UNDEFINED_PADDING || count == 0) {
             return 0;
         }
-        return (int) (indicatorPadding * (count - 1));
+        return indicatorPadding * (count - 1);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
     }
 
     private float indicatorStartX(float gap, int page) {
-        return gap * page;
+        return ViewCompat.getPaddingStart(this) + gap * page + indicatorRadius;
     }
 
     private float interpolatedOffset() {

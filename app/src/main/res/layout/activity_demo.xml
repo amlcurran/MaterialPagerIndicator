@@ -19,6 +19,9 @@
     android:background="#ff0000"
     style="@style/MaterialIndicator.Default"
     android:id="@+id/indicator"
-    android:padding="16dp" />
+    android:paddingLeft="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:paddingRight="16dp"/>
 
 </LinearLayout>
