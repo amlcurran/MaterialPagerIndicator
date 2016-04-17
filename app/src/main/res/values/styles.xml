@@ -9,4 +9,8 @@
     <item name="colorAccent">@color/colorAccent</item>
   </style>
 
+  <style name="MaterialIndicator.Default">
+    <item name="mi_indicatorColor">?android:attr/colorAccent</item>
+  </style>
+
 </resources>
