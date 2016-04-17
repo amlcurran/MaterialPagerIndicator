@@ -26,8 +26,9 @@ public class DemoActivity extends AppCompatActivity {
 
         MaterialIndicator indicator = (MaterialIndicator) findViewById(R.id.indicator);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        viewPager.addOnPageChangeListener(indicator);
         viewPager.setAdapter(new MyPagerAdapter());
+        viewPager.addOnPageChangeListener(indicator);
+        indicator.setAdapter(viewPager.getAdapter());
     }
 
     private static class MyPagerAdapter extends PagerAdapter {
