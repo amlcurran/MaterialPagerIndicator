@@ -14,7 +14,9 @@
 
   <uk.co.amlcurran.materialpagerindicator.MaterialIndicator
     android:layout_width="wrap_content"
+    android:layout_gravity="center_horizontal"
     android:layout_height="wrap_content"
+    android:background="#ff0000"
     style="@style/MaterialIndicator.Default"
     android:id="@+id/indicator"
     android:padding="16dp" />

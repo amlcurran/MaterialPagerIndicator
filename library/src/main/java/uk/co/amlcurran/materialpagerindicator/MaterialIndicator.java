@@ -11,20 +11,25 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Interpolator;
 
 public class MaterialIndicator extends View implements ViewPager.OnPageChangeListener {
 
+    private static final String TAG = MaterialIndicator.class.getSimpleName();
+    private static final int UNDEFINED_PADDING = -1;
+    private final Interpolator interpolator = new FastOutSlowInInterpolator();
     private final Paint indicatorPaint;
     private final Paint selectedIndicatorPaint;
     private final float indicatorRadius;
+    private final float indicatorPadding;
+
     private final RectF selectorRect;
     private int count;
     private int selectedPage = 0;
     private float deselectedAlpha = 0.2f;
     private float offset;
-    private final Interpolator interpolator = new FastOutSlowInInterpolator();
 
     public MaterialIndicator(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -43,6 +48,7 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.MaterialIndicator, 0, R.style.MaterialIndicator);
         try {
             indicatorRadius = typedArray.getDimension(R.styleable.MaterialIndicator_mi_indicatorRadius, 0);
+            indicatorPadding = typedArray.getDimension(R.styleable.MaterialIndicator_mi_indicatorPadding, UNDEFINED_PADDING);
             selectedIndicatorPaint.setColor(typedArray.getColor(R.styleable.MaterialIndicator_mi_indicatorColor, 0));
         } finally {
             typedArray.recycle();
@@ -77,12 +83,25 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(getMeasuredWidth(), getSuggestedMinimumHeight());
+        int width = getMeasuredWidth();
+        Log.d(TAG, "mwidth: " + width);
+        if (getLayoutParams().width == ViewPager.LayoutParams.WRAP_CONTENT) {
+            width = getSuggestedMinimumWidth();
+            Log.d(TAG, "wrapc: " + width);
+        }
+        setMeasuredDimension(width, getSuggestedMinimumHeight());
     }
 
     @Override
     protected int getSuggestedMinimumWidth() {
-        return (int) (indicatorRadius * count) + ViewCompat.getPaddingStart(this) + ViewCompat.getPaddingEnd(this);
+        return (int) (indicatorDiameter() * count) + getTotalPadding() + ViewCompat.getPaddingStart(this) + ViewCompat.getPaddingEnd(this);
+    }
+
+    private int getTotalPadding() {
+        if (indicatorPadding == UNDEFINED_PADDING || count == 0) {
+            return 0;
+        }
+        return (int) (indicatorPadding * (count - 1));
     }
 
     @Override
@@ -93,19 +112,27 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float gap = (getWidth() - indicatorDiameter()) / (count + 1);
+        float gap = getGapBetweenIndicators();
         for (int i = 0; i < count; i++) {
-            float position = pageStartX(gap, i);
+            float position = indicatorStartX(gap, i);
             canvas.drawCircle(position + indicatorRadius, midY(), indicatorRadius, indicatorPaint);
         }
-        float extenderStart = pageStartX(gap, selectedPage) + Math.max(gap * (interpolatedOffset() - 0.5f) * 2, 0);
-        float extenderEnd = pageStartX(gap, selectedPage) + indicatorDiameter() + Math.min(gap * interpolatedOffset() * 2, gap);
+        float extenderStart = indicatorStartX(gap, selectedPage) + Math.max(gap * (interpolatedOffset() - 0.5f) * 2, 0);
+        float extenderEnd = indicatorStartX(gap, selectedPage) + indicatorDiameter() + Math.min(gap * interpolatedOffset() * 2, gap);
         selectorRect.set(extenderStart, midY() - indicatorRadius, extenderEnd, midY() + indicatorRadius);
         canvas.drawRoundRect(selectorRect, indicatorRadius, indicatorRadius, selectedIndicatorPaint);
     }
 
-    private float pageStartX(float gap, int page) {
-        return gap * (page + 1);
+    private float getGapBetweenIndicators() {
+        if (indicatorPadding == UNDEFINED_PADDING) {
+            return (getWidth() - indicatorDiameter()) / (count + 1);
+        } else {
+            return indicatorPadding;
+        }
+    }
+
+    private float indicatorStartX(float gap, int page) {
+        return gap * page;
     }
 
     private float interpolatedOffset() {

@@ -11,6 +11,8 @@
 
   <style name="MaterialIndicator.Default">
     <item name="mi_indicatorColor">?android:attr/colorAccent</item>
+    <item name="mi_indicatorPadding">32dp</item>
+    <item name="mi_indicatorRadius">8dp</item>
   </style>
 
 </resources>
