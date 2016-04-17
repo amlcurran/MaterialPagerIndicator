@@ -4,11 +4,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 public class MaterialIndicator extends View implements ViewPager.OnPageChangeListener {
@@ -16,9 +16,11 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
     private final Paint indicatorPaint;
     private final Paint selectedIndicatorPaint;
     private final float indicatorRadius = 20;
+    private final RectF selectorRect;
     private int count;
     private int selectedPage = 0;
     private float deselectedAlpha = 0.2f;
+    private float offset;
 
     public MaterialIndicator(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -31,16 +33,20 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
         indicatorPaint = new Paint(selectedIndicatorPaint);
         indicatorPaint.setColor(Color.BLACK);
         indicatorPaint.setAlpha((int) (deselectedAlpha * 255));
+        selectorRect = new RectF();
     }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        Log.d(getClass().getSimpleName(), "position: " + position + " positionOffset: " + positionOffset);
+        selectedPage = position;
+        offset = positionOffset;
+        invalidate();
     }
 
     @Override
     public void onPageSelected(int position) {
         selectedPage = position;
+        offset = 0;
         invalidate();
     }
 
@@ -62,6 +68,8 @@ public class MaterialIndicator extends View implements ViewPager.OnPageChangeLis
             float position = gap * (i + 1);
             canvas.drawCircle(position + indicatorRadius, getHeight() / 2f, indicatorRadius, getIndicatorPaint(i));
         }
+        selectorRect.set(gap * (selectedPage + 1), getHeight() / 2f - indicatorRadius, gap * (selectedPage + 2) + indicatorRadius * 2, getHeight() / 2f + indicatorRadius);
+        canvas.drawRoundRect(selectorRect, indicatorRadius, indicatorRadius, selectedIndicatorPaint);
     }
 
     @NonNull
